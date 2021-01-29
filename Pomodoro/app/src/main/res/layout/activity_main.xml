@@ -6,71 +6,162 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <!--Countdown timer-->
     <TextView
-        android:id="@+id/countDownView"
+        android:id="@+id/countDownTimerView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
         android:text="@string/default_time_display"
+        android:textColor="#00BFA5"
+        android:textSize="40sp"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.242" />
+        app:layout_constraintVertical_bias="0.163" />
 
+    <!--Popup text for currently countdown type-->
+    <TextView
+        android:id="@+id/countdownTimerText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:textColor="#00BFA5"
+        android:textSize="25sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.100" />
+
+    <!--Work time text info for work seekbar-->
+    <TextView
+        android:id="@+id/seekBarSetWorktimeText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/setWorktimeText"
+        android:textSize="15sp"
+        app:layout_constraintBottom_toTopOf="@+id/seekBarSetWorkTime"
+        app:layout_constraintHorizontal_bias="0.19"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <!--Shows selected work time-->
+    <TextView
+        android:id="@+id/worktimeValueText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/worktimeValueText"
+        android:textSize="15sp"
+        app:layout_constraintBottom_toTopOf="@+id/seekBarSetWorkTime"
+        app:layout_constraintHorizontal_bias="0.804"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <!--Pause time text info for pause seekbar-->
+    <TextView
+        android:id="@+id/seekBarSetPausetimeText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="2dp"
+        android:text="@string/setPausetimeText"
+        android:textSize="15sp"
+        app:layout_constraintBottom_toTopOf="@+id/seekBarSetPauseTime"
+        app:layout_constraintHorizontal_bias="0.196"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <!--Shows selected pause time-->
+    <TextView
+        android:id="@+id/pausetimeValueText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="2dp"
+        android:text="@string/pausetimeValueText"
+        android:textSize="15sp"
+        app:layout_constraintBottom_toTopOf="@+id/seekBarSetPauseTime"
+        app:layout_constraintHorizontal_bias="0.804"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <!--Text info for worksessions repetitions-->
+    <TextView
+        android:id="@+id/setWorkSessionsRepetitions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="60dp"
+        android:text="@string/repetitionsWorkSessionsInput"
+        android:textSize="15sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.668" />
+
+    <!--Startbutton-->
     <Button
         android:id="@+id/startCountdownButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="52dp"
         android:text="@string/startButtonText"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/countDownView"
-        app:layout_constraintVertical_bias="0.796" />
-
-    <Button
-        android:id="@+id/CountdownButton30"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="288dp"
-        android:text="@string/Button30Text"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.278"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <Button
-        android:id="@+id/CountdownButton60"
-        android:layout_width="wrap_content"
+    <!--Seekbar for å sette nedtellingstid. Min value=15min, max value=300min-->
+    <SeekBar
+        android:id="@+id/seekBarSetWorkTime"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="288dp"
-        android:text="@string/Button60Text"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="404dp"
+        android:max="18000000"
+        android:min="900000"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.77"
+        app:layout_constraintHorizontal_bias="0.495"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <Button
-        android:id="@+id/CountdownButton90"
-        android:layout_width="wrap_content"
+    <!--Seekbar for å sette pausetid-->
+    <SeekBar
+        android:id="@+id/seekBarSetPauseTime"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="224dp"
-        android:text="@string/Button90Text"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="312dp"
+        android:max="3600000"
+        android:min="0"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.278"
+        app:layout_constraintHorizontal_bias="0.495"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <Button
-        android:id="@+id/CountdownButton120"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="224dp"
-        android:text="@string/Button120Text"
+    <!--Inputfield for workcountdown repetitions, shows remaining repetitions if input is given-->
+    <EditText
+        android:id="@+id/countdownRepetitionsInput"
+        android:layout_width="25dp"
+        android:layout_height="39dp"
+        android:layout_marginStart="8dp"
+        android:inputType="number"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="#00BFA5"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.783"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/setWorkSessionsRepetitions"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.67" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

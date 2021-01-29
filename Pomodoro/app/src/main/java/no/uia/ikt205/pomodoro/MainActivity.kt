@@ -4,91 +4,160 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.View
-import android.widget.Button
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import no.uia.ikt205.pomodoro.util.millisecondsToDescriptiveTime
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var timer:CountDownTimer
-    lateinit var startButton:Button
-    lateinit var button30:Button
-    lateinit var button60:Button
-    lateinit var button90:Button
-    lateinit var button120:Button
-    lateinit var coutdownDisplay:TextView
+    private lateinit var timer:CountDownTimer
+    private lateinit var pauseTimer:CountDownTimer
+    private lateinit var startButton:Button
+    private lateinit var countdownDisplay:TextView
+    private lateinit var seekbarSetWorkTime:SeekBar
+    private lateinit var worktimeValueText: TextView
+    private lateinit var seekbarSetPauseTime:SeekBar
+    private lateinit var pausetimeDisplay:TextView
+    private lateinit var repetitionInput:EditText
+    private lateinit var countdownTimerText:TextView
 
     var timeToCountDownInMs = 0L
+    var pauseTimeToCountDownInMs = 0L
+    var numberOfWorkSessionsRepetitions:Int = 0
     val timeTicks = 1000L
-    var running = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        seekbarSetWorkTime = findViewById(R.id.seekBarSetWorkTime)
+        // Set the SeekBar change listener for selected worktime
+        seekbarSetWorkTime.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+
+            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+                val worktimeCountdownValue = seekbarSetWorkTime.progress
+                // Display the current value of work SeekBar
+                updateCountDownDisplay(worktimeCountdownValue.toLong())
+                updateWorktimeDisplay(worktimeCountdownValue.toLong())
+
+                if (fromUser) {
+                    timeToCountDownInMs = progress.toLong()
+                }
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar) {
+                //
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar) {
+                //
+            }
+        })
+
+        seekbarSetPauseTime = findViewById(R.id.seekBarSetPauseTime)
+        // Set the SeekBar change listener for selected pausetime
+        seekbarSetPauseTime.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                val pausetimeCountdownValue = seekbarSetPauseTime.progress
+                // Display the current value of pause seekbar
+                updatePausetimeDisplay(pausetimeCountdownValue.toLong())
+
+                if (fromUser) {
+                    pauseTimeToCountDownInMs = progress.toLong()
+                }
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar) {
+                //
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar) {
+                //
+            }
+        })
 
         startButton = findViewById<Button>(R.id.startCountdownButton)
         startButton.setOnClickListener(){
             startCountDown(it)
         }
 
-        button30 = findViewById<Button>(R.id.CountdownButton30)
-        button30.setOnClickListener(){
-            timeToCountDownInMs = 1800000L
-            if (!running){
-                updateCountDownDisplay(1800000)
-            }
-        }
-
-        button60 = findViewById<Button>(R.id.CountdownButton60)
-        button60.setOnClickListener(){
-            timeToCountDownInMs = 3600000L
-            if (!running){
-                updateCountDownDisplay(3600000)
-            }
-        }
-
-        button90 = findViewById<Button>(R.id.CountdownButton90)
-        button90.setOnClickListener(){
-            timeToCountDownInMs = 5400000L
-            if (!running){
-                updateCountDownDisplay(5400000)
-            }
-        }
-
-        button120 = findViewById<Button>(R.id.CountdownButton120)
-        button120.setOnClickListener(){
-            timeToCountDownInMs = 7200000L
-            if (!running){
-                updateCountDownDisplay(7200000)
-            }
-        }
-
-       coutdownDisplay = findViewById<TextView>(R.id.countDownView)
+        countdownDisplay = findViewById<TextView>(R.id.countDownTimerView)
+        pausetimeDisplay = findViewById<TextView>(R.id.pausetimeValueText)
+        worktimeValueText = findViewById<TextView>(R.id.worktimeValueText)
+        repetitionInput = findViewById(R.id.countdownRepetitionsInput)
+        // Info popup-text on which countdown that are currently running
+        countdownTimerText = findViewById(R.id.countdownTimerText)
+        countdownTimerText.toString()
 
     }
 
-    fun startCountDown(v: View){
+    private fun startCountDown(v: View){
 
         timer = object : CountDownTimer(timeToCountDownInMs,timeTicks) {
-            override fun onFinish() {
-                Toast.makeText(this@MainActivity,"Arbeidsøkt er ferdig", Toast.LENGTH_SHORT).show()
-                running = false
-            }
 
             override fun onTick(millisUntilFinished: Long) {
                 updateCountDownDisplay(millisUntilFinished)
             }
+
+            override fun onFinish() {
+                numberOfWorkSessionsRepetitions = repetitionInput.text.toString().toInt()
+
+                if (numberOfWorkSessionsRepetitions > 0) {
+                    startPauseCountdown(countdownDisplay)
+                    numberOfWorkSessionsRepetitions--
+                    repetitionInput.setText(numberOfWorkSessionsRepetitions.toString())
+                } else {
+                    v.isEnabled = true
+                    enableUserInteractionForActiveCountdown()
+                    countdownTimerText.setText("")
+                }
+            }
         }
 
-        if (!running){
-            timer.start()
-            running = true
+        timer.start()
+        v.isEnabled = false
+        disableUserInteractionForActiveCountdown()
+        countdownTimerText.setText("Get to work!")
+    }
+
+    private fun startPauseCountdown(v: View) {
+
+        pauseTimer = object : CountDownTimer(pauseTimeToCountDownInMs,timeTicks) {
+
+            override fun onTick(millisUntilFinished: Long) {
+                updateCountDownDisplay(millisUntilFinished)
+            }
+
+            override fun onFinish() {
+                timer.start()
+                countdownTimerText.setText("Get to work!")
+            }
         }
+        pauseTimer.start()
+        countdownTimerText.setText("Pause")
     }
 
-    fun updateCountDownDisplay(timeInMs:Long){
-        coutdownDisplay.text = millisecondsToDescriptiveTime(timeInMs)
+    private fun updateCountDownDisplay(timeInMs: Long){
+        countdownDisplay.text = millisecondsToDescriptiveTime(timeInMs)
     }
 
+    private fun updatePausetimeDisplay(timeInMs: Long){
+        pausetimeDisplay.text = millisecondsToDescriptiveTime(timeInMs)
+    }
+
+    private fun updateWorktimeDisplay(timeInMs: Long){
+        worktimeValueText.text = millisecondsToDescriptiveTime(timeInMs)
+    }
+
+    private fun disableUserInteractionForActiveCountdown() {
+        seekbarSetWorkTime.isEnabled = false
+        seekbarSetPauseTime.isEnabled = false
+        repetitionInput.isEnabled = false
+    }
+
+    private fun enableUserInteractionForActiveCountdown() {
+        seekbarSetWorkTime.isEnabled = true
+        seekbarSetPauseTime.isEnabled = true
+        repetitionInput.isEnabled = true
+    }
 }
