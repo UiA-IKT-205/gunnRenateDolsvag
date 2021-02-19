@@ -1,4 +1,4 @@
-package com.example.superpiano
+package com.example.piano
 
 import org.junit.Test
 
