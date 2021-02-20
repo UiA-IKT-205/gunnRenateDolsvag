@@ -21,8 +21,7 @@ class WhitePianoKeysFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            // senderinn default verdi med Elvis operator ?:
-            note = it.getString("NOTE") ?: "?" // hvis satt til 0 blir noten satt til?
+            note = it.getString("NOTE") ?: "?"
         }
     }
 
