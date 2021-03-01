@@ -34,6 +34,9 @@ class WhitePianoKeysFragment : Fragment() {
         val view = binding.root
 
         view.whiteToneKeyButton.setOnTouchListener(object: View.OnTouchListener{
+
+            var activateButtonStartTime = 0
+
             override fun onTouch(v: View?, event: MotionEvent?): Boolean {
                 when(event?.action){
                     MotionEvent.ACTION_DOWN -> this@WhitePianoKeysFragment.onKeyDown?.invoke(note)
