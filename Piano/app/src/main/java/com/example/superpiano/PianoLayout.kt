@@ -1,5 +1,6 @@
 package com.example.superpiano
 
+import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.view.LayoutInflater
@@ -8,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import com.example.superpiano.data.NoteSheet
 import com.example.superpiano.databinding.FragmentPianoBinding
@@ -24,8 +26,9 @@ class PianoLayout : Fragment() {
 
     private val whiteKeys = listOf("C1","D1","E1","F1","G1","A1","B1","C2","D2","E2","F2","G2","A2","B2")
     private val blackKeys = listOf("C1#","D1#","F1#","G1#","A1#","C2#","D2#","F2#","G2#","A2#")
-
     private var musicTune:MutableList<NoteSheet> = mutableListOf<NoteSheet>()
+
+    var onSave:((file:Uri) -> Unit)? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -115,7 +118,7 @@ class PianoLayout : Fragment() {
 
 
         view.saveMusicTuneButton.setOnClickListener {
-            val filename = view.fileNameInput.text.toString()
+            var filename = view.fileNameInput.text.toString()
             val filepath = this.activity?.getExternalFilesDir(null)
             var checkForDuplicateFilename = false
             val checkExternalStorageReadOnly = Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED_READ_ONLY
@@ -126,11 +129,11 @@ class PianoLayout : Fragment() {
 
             File("/storage/emulated/0/Android/data/com.example.superpiano/files").walk().forEach {
                 // Prints out existing files since I can't view content in Device file explorer due to "Permission denied" error.
-               println("IT: $it")
+                println("IT: $it")
 
-               if (it == newFile) {
-                   checkForDuplicateFilename = true
-               }
+                if (it == newFile) {
+                    checkForDuplicateFilename = true
+                }
             }
 
             when {
@@ -142,7 +145,6 @@ class PianoLayout : Fragment() {
                     Toast.makeText(activity,"Filepath already exists",Toast.LENGTH_SHORT).show();
 
                 else -> {
-
                     when {
                         checkExternalStorageReadOnly -> {
                             Toast.makeText(activity,"External storage is read only", Toast.LENGTH_SHORT).show();
@@ -150,31 +152,42 @@ class PianoLayout : Fragment() {
                         !checkAvailabilityExternalStorage -> {
                             Toast.makeText(activity,"Not enough space on external storage", Toast.LENGTH_SHORT).show();
                             disableButton(saveMusicTuneButton)
-                        }
-
-                        else -> {
-                            FileOutputStream(File(filepath, filename), true).bufferedWriter().use { writer ->
-                                musicTune.forEach {
-                                    writer.write("${it.toString()}\n")
-                                }
-                                Toast.makeText(activity, "File successfully saved", Toast.LENGTH_SHORT).show();
-                                musicTune.clear()
-                                fileNameInput.text.clear()
-                            }
-
-                            FileOutputStream(File(filepath, filename)).close()
+                        } else -> {
+                            filename = "$filename.music"
+                            val content:String = musicTune.map {
+                                it.toString()
+                            }.reduce { acc, s -> acc + s + "\n" }
+                            saveFile(filename,content)
                         }
                     }
                 }
             }
         }
-
         return view
+    }
+
+    private fun saveFile(filename:String, content:String) {
+        val filepath = this.activity?.getExternalFilesDir(null)
+
+        if (filepath != null) {
+            val file = File(filepath,filename)
+            FileOutputStream(file, true).bufferedWriter().use { writer ->
+                writer.write(content)
+            }
+
+            this.onSave?.invoke(file.toUri())
+            Toast.makeText(activity, "File successfully saved", Toast.LENGTH_SHORT).show();
+            musicTune.clear()
+            fileNameInput.text.clear()
+            FileOutputStream(File(filepath, filename)).close()
+
+        } else {
+            Toast.makeText(activity, "Could not get external filepath", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun disableButton(button: Button) {
         button.isEnabled = false
         button.setTextColor(ContextCompat.getColor(saveMusicTuneButton.context, R.color.red_213_disable_button))
     }
-
 }

@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <fragment
+    <androidx.fragment.app.FragmentContainerView
         android:id="@+id/Piano"
         android:name="com.example.superpiano.PianoLayout"
         android:layout_width="match_parent"
